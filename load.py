@@ -89,7 +89,7 @@ def main():
     raw = loadRaw('1541108087')
     header = WorldFileHeader.fromBinary(raw, 0)
 
-    col = Column.fromBinary(raw, 192)
+    col = Column.fromBinary(raw, ctypes.sizeof(header))
 
     cube = col.getBlocks()
     cube[cube > 10] = 1  # for better visibility
