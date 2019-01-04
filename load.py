@@ -49,7 +49,7 @@ class WorldFileHeader(BaseStructure):
                 ('hash', ctypes.c_char * 36),
                 ('skycolors', Color),
                 ('goldencubes', ctypes.c_int),
-                ('reserved', ctypes.c_char * 192)]
+                ('reserved', ctypes.c_char * 40)]
 
 
 class ColumnIndex(BaseStructure):
