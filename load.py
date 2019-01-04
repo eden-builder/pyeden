@@ -8,7 +8,7 @@ from mpl_toolkits.mplot3d import Axes3D
 
 def mapMem(src, obj, start=0):
     ctypes.memmove(ctypes.byref(
-        obj), src[start:ctypes.sizeof(obj)], ctypes.sizeof(obj))
+        obj), src[start:start+ctypes.sizeof(obj)], ctypes.sizeof(obj))
 
 
 class BaseStructure(ctypes.Structure):
@@ -57,6 +57,9 @@ class ColumnIndex(BaseStructure):
                 ('z', ctypes.c_int),
                 ('chunk_offset', ctypes.c_ulonglong)]
 
+    def getColumn(self, raw):
+        return Column.fromBinary(raw, self.chunk_offset)
+
 
 class ChunkHeader(BaseStructure):
     _fields_ = [('n_vertices', ctypes.c_int)]
@@ -85,16 +88,20 @@ def showCube(cube):
     plt.show()
 
 
+def getDirectory(raw, header):
+    directory = (ColumnIndex * ((len(raw) - header.directory_offset)//16))()
+    mapMem(raw, directory, header.directory_offset)
+    return directory
+
+
 def main():
     raw = loadRaw('1541108087')
     header = WorldFileHeader.fromBinary(raw, 0)
+    directory = getDirectory(raw, header)
 
-    col = Column.fromBinary(raw, ctypes.sizeof(header))
-
+    col = directory[0].getColumn(raw)
     cube = col.getBlocks()
     cube[cube > 10] = 1  # for better visibility
     showCube(cube)
-
-
 if __name__ == '__main__':
     main()
