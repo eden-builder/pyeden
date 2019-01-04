@@ -85,11 +85,16 @@ def showCube(cube):
     plt.show()
 
 
-raw = loadRaw('1541108087')
-header = WorldFileHeader.fromBinary(raw, 0)
+def main():
+    raw = loadRaw('1541108087')
+    header = WorldFileHeader.fromBinary(raw, 0)
 
-col = Column.fromBinary(raw, 192)
+    col = Column.fromBinary(raw, 192)
 
-cube = col.getBlocks()
-cube[cube > 10] = 1  # for better visibility
-showCube(cube)
+    cube = col.getBlocks()
+    cube[cube > 10] = 1  # for better visibility
+    showCube(cube)
+
+
+if __name__ == '__main__':
+    main()
